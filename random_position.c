@@ -48,6 +48,7 @@ void printM(char **m){
 
 void ranposit(char **m){
     srand(time(NULL));
+    int i;
     while(1){
         int min = 1, max = COL - 2;
         int radom = min + rand()%(max - min + 1);
@@ -56,11 +57,15 @@ void ranposit(char **m){
             char key = _getch();
             if(key == 'q') break;
         }
-        m[min][radom] = 'g';
-        printM(m);
+
+        for(i=0;i<(LIN-2);i++){
+            m[min+i][radom] = 'g';
+            printM(m);
         
-        Sleep(1200);
-        system("cls");
-        m[min][radom] = ' ';
+            Sleep(500);
+            system("cls");
+            m[min+i][radom] = ' ';
+        }
+
     } 
 }
