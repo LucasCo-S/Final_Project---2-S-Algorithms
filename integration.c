@@ -7,10 +7,12 @@
 
 //Definindo tamanho da matriz
 #define LIN 15
-#define COL 20
+#define COL 50
 #define POS_X (COL/2)
 #define POS_Y (LIN-2)
 #define NBOMB 3
+#define RESET_COLOR "\x1B[0m"
+#define WHITE_BK "\x1B[47m"
 
 //Funções de Exibir Matriz
 void fillM(char **m);
@@ -39,6 +41,9 @@ volatile BCOORD verif[NBOMB]; //Variável de verificação
 HANDLE consoleMutex;
 
 int main(){
+	// Muda a codificação para UTF-8
+    system("chcp 65001");
+	
     //Alocação dinâmica da matriz
     int i;
     char **matriz = malloc(LIN * sizeof(char *));
@@ -143,7 +148,7 @@ void fillM(char **m){
             if(i > 0 && i < (LIN - 1) && j > 0 && j < (COL - 1)){
                 m[i][j] = ' ';
             } else {
-                m[i][j] = '*';
+                m[i][j] = '¦';
             }
         }
     }
@@ -154,7 +159,11 @@ void printM(char **m, COORD pos){
     for(i = 0; i < LIN; i++){
         setPosition(pos.X, pos.Y + i);
         for(j = 0; j < COL; j++){
-            printf("%c", m[i][j]);
+            if(i == 0 || i == LIN - 1 || j == 0 || j == COL - 1){
+                printf(WHITE_BK "¦" RESET_COLOR);
+            } else {
+                printf(" ");
+            }
         }
         printf("\n");
     }
@@ -213,7 +222,7 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
             verif[2].x = random[2];
             verif[2].y = coorde.y + i;
 
-            Sleep(80);
+            Sleep(40);
 
             if(i == LIN - 3) setChar(random[0], coorde.y + i, ' ');
             if(i == LIN - 3) setChar(random[1], coorde.y + i, ' ');
