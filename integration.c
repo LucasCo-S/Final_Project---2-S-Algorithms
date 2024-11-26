@@ -10,7 +10,7 @@
 #define COL 50
 #define POS_X (COL/2)
 #define POS_Y (LIN-2)
-#define NBOMB 3
+#define MAX_BOMB 5
 #define RESET_COLOR "\x1B[0m"
 #define WHITE_BK "\x1B[47m"
 
@@ -20,6 +20,7 @@ void printM(char **m, COORD pos);
 
 //Sistema de Pontuação
 void scoreHeadQuad();
+int scorePoints = 0;
 
 //Funções de Mapeamento
 void setPosition(int x, int y);
@@ -35,7 +36,8 @@ typedef struct {
 DWORD WINAPI rPosit(LPVOID lpParam);
 
 volatile bool repeats = true; //Variável de controle
-volatile BCOORD verif[NBOMB]; //Variável de verificação
+volatile BCOORD verif[MAX_BOMB]; //Variável de verificação
+volatile int numB = 1;
 
 //Mutex para sincronizar o acesso ao console
 HANDLE consoleMutex;
@@ -82,7 +84,7 @@ int main(){
     while(repeats){
         //Verifica colisão mesmo se o jogador estiver parado
         int i;
-    	for(i = 0; i < NBOMB; i++){
+    	for(i = 0; i < numB; i++){
         	if(verif[i].x == coord_x && verif[i].y == coord_y){
             	repeats = false;
             	break;
@@ -111,7 +113,7 @@ int main(){
                 setChar(coord_x, coord_y, key);
             }
 
-			for(i = 0; i < NBOMB; i++){
+			for(i = 0; i < numB; i++){
             	if(verif[i].x == coord_x && verif[i].y == coord_y) {
                 	repeats = false;
                 	break;
@@ -199,35 +201,36 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
     srand(time(NULL));
     
     while(repeats){
-        int min = coorde.y, max = coorde.x - 2;
-        int random[NBOMB];
-		random[0] = min + rand() % ((max-1) - min + 1);
-        random[1] = min + rand() % ((max-2) - min + 1);
-        random[2] = min + rand() % ((max-3) - min + 1);
+        int min = coorde.y, max = coorde.x+2;
+        int random[numB];
+		int i, j;
+        if(scorePoints%20 == 0 && numB < MAX_BOMB) numB++;
         
-		int i;
+        for (i = 0; i < numB; i++) {
+            random[i] = min + rand() % ((max-2) - min + 1);
+        }
+
         for(i = 0; i < LIN - 2; i++) {
-            if(i > 0) setChar(random[0], coorde.y + i - 1, ' ');
-			if(i > 0) setChar(random[1], coorde.y + i - 1, ' ');
-			if(i > 0) setChar(random[2], coorde.y + i - 1, ' ');
-			
-            setChar(random[0], coorde.y + i, 'g');
-			setChar(random[1], coorde.y + i, 'g');
-			setChar(random[2], coorde.y + i, 'g');
-			
-            verif[0].x = random[0];
-            verif[0].y = coorde.y + i;
-            verif[1].x = random[1];
-            verif[1].y = coorde.y + i;
-            verif[2].x = random[2];
-            verif[2].y = coorde.y + i;
+
+            for (j = 0; j < numB; j++) {
+                if(i > 0) setChar(random[j], coorde.y + i - 1, ' ');
+            }
+
+            for (j = 0; j < numB; j++) {
+                setChar(random[j], coorde.y + i, 'g');
+                verif[j].x = random[j];
+                verif[j].y = coorde.y + i;
+            }
 
             Sleep(40);
 
-            if(i == LIN - 3) setChar(random[0], coorde.y + i, ' ');
-            if(i == LIN - 3) setChar(random[1], coorde.y + i, ' ');
-            if(i == LIN - 3) setChar(random[2], coorde.y + i, ' ');
+            if(i == LIN - 3) {
+                for (j = 0; j < numB; j++) {
+                    setChar(random[j], coorde.y + i, ' '); 
+                }
+            }
         }
+        scorePoints += (5 * numB);
     }
     return 0;
 }
@@ -241,4 +244,5 @@ void cursorHidden(){
     cursorInfo.bVisible = FALSE;
     SetConsoleCursorInfo(handCon, &cursorInfo);
 }
+
 
