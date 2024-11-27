@@ -14,15 +14,14 @@
 #define RESET_COLOR "\x1B[0m"
 #define WHITE_BK "\x1B[47m"
 
-//Funções de Exibir Matriz
-void fillM(char **m);
-void printM(char **m, COORD pos);
+//Funï¿½ï¿½es de Exibir Matriz
+void printM(COORD pos);
 
-//Sistema de Pontuação
-void scoreHeadQuad();
+//Sistema de Pontuaï¿½ï¿½o
+DWORD WINAPI scoreHeadQuad(LPVOID lpParam);
 int scorePoints = 0;
 
-//Funções de Mapeamento
+//Funï¿½ï¿½es de Mapeamento
 void setPosition(int x, int y);
 COORD getStartCursor(void);
 void setChar(int x, int y, char c);
@@ -35,38 +34,38 @@ typedef struct {
 } BCOORD;
 DWORD WINAPI rPosit(LPVOID lpParam);
 
-volatile bool repeats = true; //Variável de controle
-volatile BCOORD verif[MAX_BOMB]; //Variável de verificação
+volatile bool repeats = true; //Variï¿½vel de controle
+volatile BCOORD verif[MAX_BOMB]; //Variï¿½vel de verificaï¿½ï¿½o
 volatile int numB = 1;
 
 //Mutex para sincronizar o acesso ao console
 HANDLE consoleMutex;
 
 int main(){
-	// Muda a codificação para UTF-8
+	// Muda a codificaï¿½ï¿½o para UTF-8
     system("chcp 65001");
-	
-    //Alocação dinâmica da matriz
-    int i;
-    char **matriz = malloc(LIN * sizeof(char *));
-    for(i = 0; i < LIN; i++){
-        matriz[i] = malloc(COL * sizeof(char));
-    }
     
-    //Pegando coordenada de início da execução
+    //Definindo numeros aleatorios
+    srand(time(NULL));
+
+    //Pegando coordenada de inï¿½cio da execuï¿½ï¿½o
     COORD costart = getStartCursor();
 
-    //Posicionando área de atuação de geração de bombas
+    //DefiniÃ§Ã£o do quadro de pontos
+    int spaceBetween = 5;
+    COORD sc; 
+    sc.X = costart.X + COL + spaceBetween;
+    sc.Y = costart.Y;
+
+    //Posicionando ï¿½rea de atuaï¿½ï¿½o de geraï¿½ï¿½o de bombas
     BCOORD bombco;
     bombco.x = costart.X + COL - 2;
     bombco.y = costart.Y + 1;
 
+    //apresentando display de mapa
+    printM(costart);
 
-    //Preenchendo e apresentando matriz
-    fillM(matriz);
-    printM(matriz, costart);
-
-    //Inicializando posição do personagem
+    //Inicializando posiï¿½ï¿½o do personagem
     int coord_x = POS_X + costart.X, coord_y = POS_Y + costart.Y;
     setPosition(coord_x, coord_y);
     printf("q");
@@ -75,14 +74,20 @@ int main(){
     //Criando mutex
     consoleMutex = CreateMutex(NULL, FALSE, NULL);
 
-    //Criando thread
+    //Criando thread para geraÃ§Ã£o de Bombas
     HANDLE hrPosit;
     DWORD IdrPosit;
 
     hrPosit = CreateThread(NULL, 0, rPosit, &bombco, 0, &IdrPosit);
 
+    //Criando thread para contagem da pontuaÃ§Ã£o
+    HANDLE hscoreHeadQuad;
+    DWORD IdscoreHeadQuad;
+
+    hscoreHeadQuad = CreateThread(NULL, 0, scoreHeadQuad, &sc, 0, &IdscoreHeadQuad);
+
     while(repeats){
-        //Verifica colisão mesmo se o jogador estiver parado
+        //Verifica colisï¿½o mesmo se o jogador estiver parado
         int i;
     	for(i = 0; i < numB; i++){
         	if(verif[i].x == coord_x && verif[i].y == coord_y){
@@ -95,20 +100,20 @@ int main(){
         if(_kbhit()){
             char key = _getch();
 
-            //Ignora teclas não tratadas
+            //Ignora teclas nï¿½o tratadas
             if(key != 'a' && key != 'd' && key != 'q') continue;
 
-            //Limpando última posição
+            //Limpando ï¿½ltima posiï¿½ï¿½o
             setChar(coord_x, coord_y, ' ');
 
-            //Condição para saída
+            //Condiï¿½ï¿½o para saï¿½da
             if (key == 'q') repeats = false;
 
-            //Movimentação horizontal
+            //Movimentaï¿½ï¿½o horizontal
             if(key == 'a' && coord_x > costart.X + 1) coord_x--;
             if(key == 'd' && coord_x < (costart.X + COL - 2)) coord_x++;
 
-            //Atualiza posição do personagem
+            //Atualiza posiï¿½ï¿½o do personagem
             if(key == 'a' || key == 'd') {
                 setChar(coord_x, coord_y, key);
             }
@@ -129,7 +134,7 @@ int main(){
     CloseHandle(hrPosit);
     CloseHandle(consoleMutex); // Libera o Mutex
     
-    //aqui é pra ficar o contador de pontos
+    //aqui ï¿½ pra ficar o contador de pontos
     
     
     
@@ -143,26 +148,13 @@ int main(){
     
 }
 
-void fillM(char **m){
-    int i, j;
-    for(i = 0; i < LIN; i++){
-        for(j = 0; j < COL; j++){
-            if(i > 0 && i < (LIN - 1) && j > 0 && j < (COL - 1)){
-                m[i][j] = ' ';
-            } else {
-                m[i][j] = '¦';
-            }
-        }
-    }
-}
-
-void printM(char **m, COORD pos){
+void printM(COORD pos){
     int i, j;
     for(i = 0; i < LIN; i++){
         setPosition(pos.X, pos.Y + i);
         for(j = 0; j < COL; j++){
             if(i == 0 || i == LIN - 1 || j == 0 || j == COL - 1){
-                printf(WHITE_BK "¦" RESET_COLOR);
+                printf(WHITE_BK "ï¿½" RESET_COLOR);
             } else {
                 printf(" ");
             }
@@ -198,7 +190,6 @@ void setChar(int x, int y, char c){
 
 DWORD WINAPI rPosit(LPVOID lpParam) {
     BCOORD coorde = *(BCOORD*)lpParam;
-    srand(time(NULL));
     
     while(repeats){
         int min = coorde.y, max = coorde.x+2;
@@ -206,17 +197,17 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
 		int i, j;
         if(scorePoints%20 == 0 && numB < MAX_BOMB) numB++;
         
-        for (i = 0; i < numB; i++) {
+        for(i = 0; i < numB; i++){
             random[i] = min + rand() % ((max-2) - min + 1);
         }
 
-        for(i = 0; i < LIN - 2; i++) {
-
-            for (j = 0; j < numB; j++) {
+        for(i = 0; i < LIN - 2; i++){ 
+            WaitForSingleObject(consoleMutex, INFINITE);
+            for(j = 0; j < numB; j++){
                 if(i > 0) setChar(random[j], coorde.y + i - 1, ' ');
             }
 
-            for (j = 0; j < numB; j++) {
+            for(j = 0; j < numB; j++) {
                 setChar(random[j], coorde.y + i, 'g');
                 verif[j].x = random[j];
                 verif[j].y = coorde.y + i;
@@ -224,11 +215,13 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
 
             Sleep(40);
 
-            if(i == LIN - 3) {
-                for (j = 0; j < numB; j++) {
+            if(i == LIN - 3){
+                for (j = 0; j < numB; j++){
                     setChar(random[j], coorde.y + i, ' '); 
                 }
             }
+
+            ReleaseMutex(consoleMutex);
         }
         scorePoints += (5 * numB);
     }
@@ -245,4 +238,36 @@ void cursorHidden(){
     SetConsoleCursorInfo(handCon, &cursorInfo);
 }
 
+DWORD WINAPI scoreHeadQuad(LPVOID lpParam) {
+    COORD cPosit = *(COORD *)lpParam;
+    COORD size;
+    size.X = 9;
+    size.Y = 5;
+    COORD scorePosit;
+    scorePosit.X = cPosit.X + size.X / 2; 
+    scorePosit.Y = cPosit.Y + size.Y / 2;
 
+    WaitForSingleObject(consoleMutex, INFINITE); 
+    for (int i = 0; i < size.Y; i++) {
+        setPosition(cPosit.X, cPosit.Y + i);
+        for (int j = 0; j < size.X; j++) {
+            if (i == 0 || i == size.Y - 1 || j == 0 || j == size.X - 1) {
+                printf(WHITE_BK "ï¿½" RESET_COLOR);
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+    ReleaseMutex(consoleMutex);
+
+    while (repeats) {
+        WaitForSingleObject(consoleMutex, INFINITE); 
+        setPosition(scorePosit.X, scorePosit.Y);
+        printf("%3d", scorePoints);
+        ReleaseMutex(consoleMutex); 
+        Sleep(40);
+    }
+
+    return 0;
+}
