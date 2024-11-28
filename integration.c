@@ -41,150 +41,175 @@ volatile int numB = 1;
 //Mutex para sincronizar o acesso ao console
 HANDLE consoleMutex;
 
+//Variavel para reiniciar
+char opt;
+
 int main(){
-	// Muda a codifica��o para UTF-8
-    SetConsoleOutputCP(CP_UTF8);
-    
-    //Definindo numeros aleatorios
-    srand(time(NULL));
+    do{
+        // Muda a codifica��o para UTF-8
+        SetConsoleOutputCP(CP_UTF8);
 
-    //Pegando coordenada de in�cio da execu��o
-    COORD costart = getStartCursor();
+        //Resetando variáveis e cmd
+        repeats = TRUE, scorePoints = 0;
+        system("cls");
 
-    //Definição do quadro de pontos
-    int spaceBetween = 5;
-    COORD sc; 
-    sc.X = costart.X + COL + spaceBetween;
-    sc.Y = costart.Y;
+        //Menu simples
+        printf("==================\n");
+        printf("     \x1B[31mFall\x1B[0m");
+        printf("\x1B[34mDrop\x1B[0m");
+        printf("\x1B[0m\n"); // Reset
+        printf("==================\n");
 
-    //Posicionando �rea de atua��o de gera��o de bombas
-    BCOORD bombco;
-    bombco.x = costart.X + COL - 2;
-    bombco.y = costart.Y + 1;
+        system("pause");
 
-    //apresentando display de mapa
-    printM(costart);
+        setPosition(0, 4);
+        printf("                                               ");
+        setPosition(0, 5);
+        printf("Inciando em 3");
+        Sleep(1000);
+        setPosition(0, 5);
+        printf("Inciando em 2");
+        Sleep(1000);
+        setPosition(0, 5);
+        printf("Inciando em 1\n");
+        Sleep(1000);
 
-    //Inicializando posi��o do personagem
-    int coord_x = POS_X + costart.X, coord_y = POS_Y + costart.Y;
-    setPosition(coord_x, coord_y);
-    printf("\U0001F525");
-    cursorHidden();
+        //Definindo numeros aleatorios
+        srand(time(NULL));
 
-    //Criando mutex
-    consoleMutex = CreateMutex(NULL, FALSE, NULL);
+        //Pegando coordenada de in�cio da execu��o
+        COORD costart = getStartCursor();
 
-    //Criando thread para geração de Bombas
-    HANDLE hrPosit;
-    DWORD IdrPosit;
+        //Definição do quadro de pontos
+        int spaceBetween = 5;
+        COORD sc; 
+        sc.X = costart.X + COL + spaceBetween;
+        sc.Y = costart.Y;
 
-    hrPosit = CreateThread(NULL, 0, rPosit, &bombco, 0, &IdrPosit);
+        //Posicionando �rea de atua��o de gera��o de bombas
+        BCOORD bombco;
+        bombco.x = costart.X + COL - 2;
+        bombco.y = costart.Y + 1;
 
+        //apresentando display de mapa
+        printM(costart);
 
-    while(repeats){
-        //Verifica colis�o mesmo se o jogador estiver parado
-        int i;
-    	for(i = 0; i < numB; i++){
-        	if(verif[i].x == coord_x && verif[i].y == coord_y || verif[i].x == coord_x+1 && verif[i].y == coord_y){
-            	repeats = false;
-            	break;
-        	}
-    	}
-    	if(!repeats) break; 
-
-        if(_kbhit()){
-            char key = _getch();
-
-            //Ignora teclas n�o tratadas
-            if(key != 'a' && key != 'd' && key != 'q') continue;
-
-            //Limpando �ltima posi��o
-            setChar(coord_x, coord_y, ' ');
-
-            //Condi��o para sa�da
-            if (key == 'q') repeats = false;
-
-            //Movimenta��o horizontal
-            if(key == 'a' && coord_x > costart.X + 1) coord_x--;
-            if(key == 'd' && coord_x < (costart.X + COL - 2)) coord_x++;
-
-            //Atualiza posi��o do personagem
-            if(key == 'a' || key == 'd'){
-                setChar(coord_x, coord_y, key);
-            }
-
-			for(i = 0; i < numB; i++){
-            	if(verif[i].x == coord_x && verif[i].y == coord_y) {
-                	repeats = false;
-                	break;
-            	}
-        	}
-
-            Sleep(50);
-        }
-    }
-    
-
-    WaitForSingleObject(hrPosit, INFINITE);
-    CloseHandle(hrPosit);
-    CloseHandle(consoleMutex); // Libera o Mutex
-    
-    printf("\n\nO jogo acabou, va olhar a luz do sol.\n");
-    printf("Pontos: | %d |\n", scorePoints);
-
-    while(1){
-    	if(_kbhit()){
-    		char letra = _getch();
-    		if(letra == 'o') break;
-		}
-	}
-    
-}
-
-void printM(COORD pos){
-    int i, j;
-    for(i = 0; i < LIN; i++){
-        setPosition(pos.X, pos.Y + i);
-        for(j = 0; j < COL; j++){
-            if(i == 0 || i == LIN - 1 || j == 0 || j == COL - 1){
-                printf(WHITE_BK "¦" RESET_COLOR);
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }
-}
-
-COORD getStartCursor(){
-    CONSOLE_SCREEN_BUFFER_INFO cursor;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursor);
-    return cursor.dwCursorPosition;
-}
-
-void setPosition(int x, int y){
-    WaitForSingleObject(consoleMutex, INFINITE); // Bloqueia o Mutex
-    COORD pos = {x, y};
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-    ReleaseMutex(consoleMutex); // Libera o Mutex
-}
-
-void setChar(int x, int y, char c){
-    WaitForSingleObject(consoleMutex, INFINITE); // Bloqueia o Mutex
-    setPosition(x, y);
-    
-    if(c == 'a' || c == 'd'){
+        //Inicializando posi��o do personagem
+        int coord_x = POS_X + costart.X, coord_y = POS_Y + costart.Y;
+        setPosition(coord_x, coord_y);
         printf("\U0001F525");
-    }else{
-        printf(" ");
+        cursorHidden();
+
+        //Criando mutex
+        consoleMutex = CreateMutex(NULL, FALSE, NULL);
+
+        //Criando thread para geração de Bombas
+        HANDLE hrPosit;
+        DWORD IdrPosit;
+
+        hrPosit = CreateThread(NULL, 0, rPosit, &bombco, 0, &IdrPosit);
+
+
+        while(repeats){
+            //Verifica colis�o mesmo se o jogador estiver parado
+            int i;
+            for(i = 0; i < numB; i++){
+                if((verif[i].x == coord_x || verif[i].x == coord_x+1 || verif[i].x == coord_x-1) && verif[i].y == coord_y){
+                    repeats = false;
+                    break;
+                }
+            }
+            if(!repeats) break; 
+
+            if(_kbhit()){
+                char key = _getch();
+
+                //Ignora teclas n�o tratadas
+                if(key != 'a' && key != 'd' && key != 'q') continue;
+
+                //Limpando �ltima posi��o
+                setChar(coord_x, coord_y, ' ');
+
+                //Condi��o para sa�da
+                if (key == 'q') repeats = false;
+
+                //Movimenta��o horizontal
+                if(key == 'a' && coord_x > costart.X + 1) coord_x--;
+                if(key == 'd' && coord_x < (costart.X + COL - 2)) coord_x++;
+
+                //Atualiza posi��o do personagem
+                if(key == 'a' || key == 'd'){
+                    setChar(coord_x, coord_y, key);
+                }
+
+                for(i = 0; i < numB; i++){
+                    if(verif[i].x == coord_x && verif[i].y == coord_y) {
+                        repeats = false;
+                        break;
+                    }
+                }
+
+                Sleep(50);
+            }
+        }
+        
+
+        WaitForSingleObject(hrPosit, INFINITE);
+        CloseHandle(hrPosit);
+        CloseHandle(consoleMutex); // Libera o Mutex
+        
+        printf("\n\nO jogo acabou, va olhar a luz do sol.\n");
+        printf("Pontos: | %d |\n\n", scorePoints);
+        
+        printf("Deseja continuar? [Y/N]");
+        scanf("%c", &opt);
+    }while(opt == 'y' || opt == 'Y');
+}
+
+    void printM(COORD pos){
+        int i, j;
+        for(i = 0; i < LIN; i++){
+            setPosition(pos.X, pos.Y + i);
+            for(j = 0; j < COL; j++){
+                if(i == 0 || i == LIN - 1 || j == 0 || j == COL - 1){
+                    printf(WHITE_BK "¦" RESET_COLOR);
+                } else {
+                    printf(" ");
+                }
+            }
+            printf("\n");
+        }
     }
-    if(c == 'o'){
-        printf("\x1B[36mo\x1B[0m");
-    }else if(c == ' '){
-        printf("%c", c); 
+
+    COORD getStartCursor(){
+        CONSOLE_SCREEN_BUFFER_INFO cursor;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursor);
+        return cursor.dwCursorPosition;
     }
-    
-    ReleaseMutex(consoleMutex); // Libera o Mutex
+
+    void setPosition(int x, int y){
+        //WaitForSingleObject(consoleMutex, INFINITE); // Bloqueia o Mutex
+        COORD pos = {x, y};
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+        //ReleaseMutex(consoleMutex); // Libera o Mutex
+    }
+
+    void setChar(int x, int y, char c){
+        WaitForSingleObject(consoleMutex, INFINITE); // Bloqueia o Mutex
+        setPosition(x, y);
+        
+        if(c == 'a' || c == 'd'){
+            printf("\U0001F525");
+        }else{
+            printf(" ");
+        }
+        if(c == 'o'){
+            printf("\x1B[36mo\x1B[0m");
+        }else if(c == ' '){
+            printf("%c", c); 
+        }
+        
+        ReleaseMutex(consoleMutex); // Libera o Mutex}
 }
 
 DWORD WINAPI rPosit(LPVOID lpParam) {
