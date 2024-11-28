@@ -43,7 +43,7 @@ HANDLE consoleMutex;
 
 int main(){
 	// Muda a codifica��o para UTF-8
-    system("chcp 65001");
+    SetConsoleOutputCP(CP_UTF8);
     
     //Definindo numeros aleatorios
     srand(time(NULL));
@@ -68,7 +68,7 @@ int main(){
     //Inicializando posi��o do personagem
     int coord_x = POS_X + costart.X, coord_y = POS_Y + costart.Y;
     setPosition(coord_x, coord_y);
-    printf("q");
+    printf("\U0001F525");
     cursorHidden();
 
     //Criando mutex
@@ -80,17 +80,12 @@ int main(){
 
     hrPosit = CreateThread(NULL, 0, rPosit, &bombco, 0, &IdrPosit);
 
-    //Criando thread para contagem da pontuação
-    HANDLE hscoreHeadQuad;
-    DWORD IdscoreHeadQuad;
-
-    hscoreHeadQuad = CreateThread(NULL, 0, scoreHeadQuad, &sc, 0, &IdscoreHeadQuad);
 
     while(repeats){
         //Verifica colis�o mesmo se o jogador estiver parado
         int i;
     	for(i = 0; i < numB; i++){
-        	if(verif[i].x == coord_x && verif[i].y == coord_y){
+        	if(verif[i].x == coord_x && verif[i].y == coord_y || verif[i].x == coord_x+1 && verif[i].y == coord_y){
             	repeats = false;
             	break;
         	}
@@ -114,7 +109,7 @@ int main(){
             if(key == 'd' && coord_x < (costart.X + COL - 2)) coord_x++;
 
             //Atualiza posi��o do personagem
-            if(key == 'a' || key == 'd') {
+            if(key == 'a' || key == 'd'){
                 setChar(coord_x, coord_y, key);
             }
 
@@ -125,7 +120,7 @@ int main(){
             	}
         	}
 
-            //Sleep(50);
+            Sleep(50);
         }
     }
     
@@ -134,11 +129,9 @@ int main(){
     CloseHandle(hrPosit);
     CloseHandle(consoleMutex); // Libera o Mutex
     
-    //aqui � pra ficar o contador de pontos
-    
-    
-    
     printf("\n\nO jogo acabou, va olhar a luz do sol.\n");
+    printf("Pontos: | %d |\n", scorePoints);
+
     while(1){
     	if(_kbhit()){
     		char letra = _getch();
@@ -154,7 +147,7 @@ void printM(COORD pos){
         setPosition(pos.X, pos.Y + i);
         for(j = 0; j < COL; j++){
             if(i == 0 || i == LIN - 1 || j == 0 || j == COL - 1){
-                printf(WHITE_BK "�" RESET_COLOR);
+                printf(WHITE_BK "¦" RESET_COLOR);
             } else {
                 printf(" ");
             }
@@ -180,10 +173,16 @@ void setChar(int x, int y, char c){
     WaitForSingleObject(consoleMutex, INFINITE); // Bloqueia o Mutex
     setPosition(x, y);
     
-    if(c == 'a') c = 'q';
-    if(c == 'd') c = 'p';
-    
-	printf("%c", c);
+    if(c == 'a' || c == 'd'){
+        printf("\U0001F525");
+    }else{
+        printf(" ");
+    }
+    if(c == 'o'){
+        printf("\x1B[36mo\x1B[0m");
+    }else if(c == ' '){
+        printf("%c", c); 
+    }
     
     ReleaseMutex(consoleMutex); // Libera o Mutex
 }
@@ -192,7 +191,7 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
     BCOORD coorde = *(BCOORD*)lpParam;
     
     while(repeats){
-        int min = coorde.y, max = coorde.x+2;
+        int min = coorde.y, max = coorde.x;
         int random[numB];
 		int i, j;
         if(scorePoints%20 == 0 && numB < MAX_BOMB) numB++;
@@ -202,13 +201,12 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
         }
 
         for(i = 0; i < LIN - 2; i++){ 
-            WaitForSingleObject(consoleMutex, INFINITE);
             for(j = 0; j < numB; j++){
                 if(i > 0) setChar(random[j], coorde.y + i - 1, ' ');
             }
 
-            for(j = 0; j < numB; j++) {
-                setChar(random[j], coorde.y + i, 'g');
+            for(j = 0; j < numB; j++){
+                setChar(random[j], coorde.y + i, 'o');
                 verif[j].x = random[j];
                 verif[j].y = coorde.y + i;
             }
@@ -220,8 +218,6 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
                     setChar(random[j], coorde.y + i, ' '); 
                 }
             }
-
-            ReleaseMutex(consoleMutex);
         }
         scorePoints += (5 * numB);
     }
@@ -236,38 +232,4 @@ void cursorHidden(){
 
     cursorInfo.bVisible = FALSE;
     SetConsoleCursorInfo(handCon, &cursorInfo);
-}
-
-DWORD WINAPI scoreHeadQuad(LPVOID lpParam) {
-    COORD cPosit = *(COORD *)lpParam;
-    COORD size;
-    size.X = 9;
-    size.Y = 5;
-    COORD scorePosit;
-    scorePosit.X = cPosit.X + size.X / 2; 
-    scorePosit.Y = cPosit.Y + size.Y / 2;
-
-    WaitForSingleObject(consoleMutex, INFINITE); 
-    for (int i = 0; i < size.Y; i++) {
-        setPosition(cPosit.X, cPosit.Y + i);
-        for (int j = 0; j < size.X; j++) {
-            if (i == 0 || i == size.Y - 1 || j == 0 || j == size.X - 1) {
-                printf(WHITE_BK "�" RESET_COLOR);
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }
-    ReleaseMutex(consoleMutex);
-
-    while (repeats) {
-        WaitForSingleObject(consoleMutex, INFINITE); 
-        setPosition(scorePosit.X, scorePosit.Y);
-        printf("%3d", scorePoints);
-        ReleaseMutex(consoleMutex); 
-        Sleep(40);
-    }
-
-    return 0;
 }
