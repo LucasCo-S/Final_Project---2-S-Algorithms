@@ -20,6 +20,7 @@ void printM(COORD pos);
 //Sistema de Pontua��o
 DWORD WINAPI scoreHeadQuad(LPVOID lpParam);
 int scorePoints = 0;
+void bufferCleaner(void);
 
 //Fun��es de Mapeamento
 void setPosition(int x, int y);
@@ -50,7 +51,7 @@ int main(){
         SetConsoleOutputCP(CP_UTF8);
 
         //Resetando variáveis e cmd
-        repeats = TRUE, scorePoints = 0;
+        repeats = TRUE, scorePoints = 0, numB = 1;
         system("cls");
 
         //Menu simples
@@ -163,6 +164,7 @@ int main(){
         
         printf("Deseja continuar? [Y/N]");
         scanf("%c", &opt);
+        bufferCleaner();
     }while(opt == 'y' || opt == 'Y');
 }
 
@@ -257,4 +259,9 @@ void cursorHidden(){
 
     cursorInfo.bVisible = FALSE;
     SetConsoleCursorInfo(handCon, &cursorInfo);
+}
+
+void bufferCleaner(void){
+	char c;
+	while((c = getchar()) != '\n' && c != EOF);
 }
