@@ -7,7 +7,7 @@
 
 //Definindo tamanho da matriz
 #define LIN 15
-#define COL 50
+#define COL 40
 #define POS_X (COL/2)
 #define POS_Y (LIN-2)
 #define MAX_BOMB 5
@@ -81,15 +81,9 @@ int main(){
         //Pegando coordenada de in�cio da execu��o
         COORD costart = getStartCursor();
 
-        //Definição do quadro de pontos
-        int spaceBetween = 5;
-        COORD sc; 
-        sc.X = costart.X + COL + spaceBetween;
-        sc.Y = costart.Y;
-
         //Posicionando �rea de atua��o de gera��o de bombas
         BCOORD bombco;
-        bombco.x = costart.X + COL - 2;
+        bombco.x = costart.X + COL + 2;
         bombco.y = costart.Y + 1;
 
         //apresentando display de mapa
@@ -136,7 +130,7 @@ int main(){
 
                 //Movimenta��o horizontal
                 if(key == 'a' && coord_x > costart.X + 1) coord_x--;
-                if(key == 'd' && coord_x < (costart.X + COL - 2)) coord_x++;
+                if(key == 'd' && coord_x < (costart.X + COL - 3)) coord_x++;
 
                 //Atualiza posi��o do personagem
                 if(key == 'a' || key == 'd'){
@@ -161,9 +155,113 @@ int main(){
         
         printf("\n\nO jogo acabou, va olhar a luz do sol.\n");
         printf("Pontos: | %d |\n\n", scorePoints);
+
+        if(scorePoints > 1000) printf("Você perdeu um belo tempo no meu jogo, obrigado ♥!!!\n\n");
         
         printf("Deseja continuar? [Y/N]");
         scanf("%c", &opt);
+        if (opt == 'P')
+        {
+            system("curl ascii.live/parrot");
+        }
+
+        if (opt == 'E')
+        {
+            printf(" ⡀⠔⣼⡘⠌⠄⣿⠃⣡⡾⢁⠊⡀⠈⣽⣿⣿⡗⣼⡜⣿⣷⠹⡻⢸⢏⠻⠐⣄⡿\n");
+            printf(" ⢄⠘⠚⡇⡀⠄⠄⡢⠙⠃⠂⢠⡇⠸⣿⣿⡿⢳⣜⢰⡹⣾⡌⡇⡘⠙⠄⠓⠸⡱\n");
+            printf(" ⠂⡀⠂⣑⠄⠄⢰⠃⡎⠰⠄⢙⠃⢧⣻⡯⠃⢁⣿⣟⣷⣌⠇⡫⡄⠄⠁⢀⠄⢀\n");
+            printf(" ⡀⠄⠄⢸⢂⣴⡌⡖⠡⡃⠞⣡⣴⣮⠝⣡⣿⣷⣿⣿⣿⣭⣦⢰⠐⠄⠄⠈⢀⡴\n");
+            printf(" ⠄⠄⠄⢀⠈⢿⣿⡾⣿⣿⣿⣿⣿⡿⣿⣿⣿⣟⣿⣿⠻⣻⣿⣆⣐⠄⠄⠄⢨⣷\n");
+            printf(" ⠄⠄⠄⢀⠂⡛⠛⠉⠉⣉⢉⠉⢛⢵⣿⣯⡟⠃⢉⢈⣀⠄⠈⠉⠄⢁⡀⠄⠄⠐\n");
+            printf(" ⠄⠄⠄⣯⡾⢠⡢⢽⣘⣙⠄⠃⢐⣿⣿⣿⣧⣀⣌⠈⠤⠰⢂⣤⣴⢶⣦⠄⠄⡀\n");
+            printf(" ⠄⠠⠠⣷⣞⣿⣿⣶⣧⣴⣶⣾⣿⣿⣶⣶⡙⢿⣿⣿⣷⣿⣿⣿⣿⠶⡍⠄⡈⡠\n");
+            printf(" ⠄⠄⢠⠒⠨⣿⣿⣿⡝⢿⡿⢛⣿⣿⣿⣿⣿⣿⣝⢿⣿⣿⣿⣿⣛⡊⡂⠐⠄⠄\n");
+            printf(" ⠄⠄⠄⡎⣶⣿⣿⣿⢇⠋⣱⣼⣛⣛⣿⡽⠉⠋⠍⣌⢿⣿⣿⣿⣟⡿⠁⠄⠄⠄\n");
+            printf(" ⠄⠄⠄⠸⣎⠹⣿⣿⡶⣶⣿⣿⣿⣿⣿⣿⣷⣮⣴⣿⣧⡣⡘⢩⡟⠄⠄⠄⠄⠄\n");
+            printf(" ⠄⠄⠄⠄⢿⡇⡨⣿⢿⡛⠟⠝⠛⢛⡙⢉⡋⠙⢛⠉⠛⠣⣸⣿⠃⠄⠄⠄⠄⠄\n");
+            printf(" ⠈⠂⠄⠄⠈⢿⣾⣾⣿⣷⡆⢀⣈⡈⠥⠸⠃⠄⡀⣠⠌⢠⡴⠕⠄⠄⠄⠄⠄⢘\n");
+            printf(" ⠄⠄⠄⠄⠐⠈⢯⢿⣿⣿⣿⠷⣭⣽⣠⣬⠶⠢⠛⠋⣨⡿⠈⠄⠄⠄⠄⠄⠄⣤\n");
+            printf(" ⠈⠄⠄⠄⠄⠄⠄⢿⣿⣿⣿⣷⡿⢿⣟⣿⣶⣁⣟⡯⠁⠄⠄⠄⡀⠄⠄⢰⣿\n");
+        }
+
+        if (opt == 'B')
+        {
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣠⣤⣾⣷⣦⣄⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣠⣴⣾⣿⣿⣿⣿⣿⣿⣷⣶⣄⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣀⣠⣶⣿⡿⠟⠋⠉⠉⠄⠄⠈⠉⠙⠻⢿⣿⣶⣤⣀⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣀⣤⣶⣿⣿⣿⠏⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⠙⣿⣿⣿⣶⣦⣄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⣠⣴⣾⣿⣿⣿⣿⣿⣯⠖⠶⠖⠖⢦⣠⡤⣄⣀⡀⠄⠄⠄⠄⠈⣿⣿⣿⣿⣿⣷⣦⣄⡀⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⢀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⡟⠄⠂⠄⠄⠄⠄⠄⠉⠉⠘⠋⠷⣦⣄⡀⠄⢹⣿⣿⣿⣿⣿⣿⣿⣿⣦⣤⣀⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠉⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠄⢀⡀⠄⠈⠄⠄⠠⠄⠄⠄⠄⠄⠑⠫⢶⣼⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠉⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠈⠙⠻⢿⣿⣿⣿⣿⣿⣄⠈⠄⠐⠄⠄⠄⢁⠄⠄⠄⠄⠄⠐⠄⢀⣿⣿⣿⣿⣿⣿⠟⠋⠁⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠙⠻⢿⣿⣿⣿⣄⡀⠄⠄⠄⠄⠄⠄⠄⠄⠂⠄⢈⣠⣿⣿⣿⡿⠟⠋⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠉⠛⠿⣿⣷⣦⣄⣀⠄⠄⠄⠄⣀⣠⣥⣾⣿⠿⠛⠉⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⠙⠻⢿⣿⣿⣿⣿⣿⣿⣿⠿⠋⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+            printf("⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⠙⠻⢿⡿⠟⠋⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄\n");
+        }
+
+        if (opt == 'K')
+        {
+            printf("⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⡿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⠛⡺⣺⣪⣽⣫⣳⡼⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣿⣿⣿⠋⢻⣰⣿⣿⣿⣿⣿⣿⣿⣷⣟⢾⣽⣿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣿⡩⠱⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⠎⢻⡿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⡿⣭⠂⠀⠀⢸⣿⣿⣿⣿⣿⢿⣿⣿⣿⠛⠕⡯⢒⠾⣿⢿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⡂⠀⣎⠇⠀⠡⠀⠉⠉⣏⠀⠐⠒⠽⣻⣿⠄⡡⡴⢕⡈⠉⡏⣿⣿\n");
+            printf("⣿⣿⣿⡟⡄⠀⡨⠑⠀⢠⣤⣴⢼⣿⣿⣿⣿⣿⣿⣗⠄⠀⠀⡈⠐⠲⠀⠹⣿\n");
+            printf("⣿⣿⣿⡠⠀⠂⠀⡤⠀⢸⢿⡇⠙⠛⠛⣿⢿⣿⣿⡇⠠⠎⠀⠀⠀⠠⠕⢩⣿\n");
+            printf("⣿⣿⣿⡦⠀⠀⠀⡅⠀⠀⠗⠐⠑⠈⠁⠑⠡⠉⠋⠘⢁⣒⠀⠀⠀⢀⣴⣿⣿\n");
+            printf("⣿⣿⣿⣿⣷⡄⡀⠀⡉⠐⡀⠀⠀⣀⣀⣀⢀⠄⡀⢀⡧⣵⣠⠀⣤⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⡬⠁⠀⠁⠀⠀⠀⠥⢌⡅⢓⣼⠠⡃⡘⣹⣿⢾⣸⣟⡏⠸⢻⢻\n");
+            printf("⣿⣿⣿⣿⣿⣿⣅⢠⠼⢃⠠⢤⠶⠄⠵⢝⣻⢗⣮⣙⣿⠏⠐⠀⠈⠐⠉⠬⢛\n");
+            printf("⣿⣿⣿⣯⣯⡿⠙⠀⠢⠠⠆⣊⣂⠐⢱⡜⣿⣩⡧⠗⠍⠀⠀⠀⠀⡀⢄⣀⣀\n");
+            printf("⣿⣿⠟⠈⠂⠀⠀⠀⠀⠀⠀⠁⠥⠖⠫⠌⠐⠁⠁⠀⠀⢀⠀⠐⢀⡱⢶⣬⣿\n");
+            printf("⣯⠡⠁⠀⠀⠀⠀⠀⢀⣡⠄⡀⠀⠀⠀⠂⠀⠀⡀⠀⠀⢂⢔⢹⣝⢿⣿⣶⣿\n");
+        }
+
+        if (opt == 'W')
+        {
+            printf("⣿⣿⣿⣿⣿⡏⠉⠄⠄⠄⠄⠄⠄⠄⠄⠈⠉⠉⠉⠉⠉⠉⠉⢿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠸⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⠄⠄⣀⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⠄⢠⡏⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣿⣿⣿⣿⣿⣿\n");
+            printf("⣍⡉⠙⠛⠛⠄⠾⢀⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠙⠛⠛⠛⠛⣛\n");
+            printf("⣿⣿⣶⣦⣄⢀⣀⡀⠄⠉⠉⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⣀⡀⠄⣤⣤⣶⣶⣾⣿\n");
+            printf("⣿⣿⣿⣿⠛⠸⣿⣿⣿⣿⣟⣿⣿⣿⣿⣿⣟⣻⣾⣿⣿⣿⡅⠄⢻⢿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣧⡃⠄⢀⠤⠄⠄⠄⠄⠄⢀⡀⠄⢠⡤⠄⠄⠄⠄⠄⠄⡇⢠⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⡇⠄⢹⠄⠄⠄⠄⠄⠄⢸⣿⠄⠘⠄⠄⠄⠄⠄⠄⢸⢀⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⡝⡇⢄⣀⣀⣀⣀⣠⣴⣸⣿⠄⠈⢀⠄⢀⣀⡀⠄⢨⣾⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣅⠸⣿⣿⣿⣿⣹⡿⠿⡿⠇⠋⡻⣿⣿⠟⠄⠄⣦⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣿⠄⣿⡽⣿⠗⠋⠉⠁⠈⠄⠉⠘⠛⣿⢠⠄⠄⣿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣿⣧⡘⣿⠏⠄⣠⣤⣄⣠⣤⣀⣠⣄⠻⢸⠃⣼⣿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣿⣿⣷⣸⠄⢐⢿⡏⠁⠄⠈⢹⠿⠟⢀⣾⣾⣿⣿⣿⣿⣿⣿⣿⣿\n");
+            printf("⣿⣿⣿⣿⣿⣿⣿⣿⣿⣄⠃⠈⠁⠄⠄⠄⠈⠄⠄⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿\n");
+        }
+        
+        if (opt == 'U')
+        {
+            printf("⠐⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ \n");
+            printf("⠄⢀⣠⣿⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⡅ \n");
+            printf("⣷⠈⣡⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⠛⠛⠛⠛⠛⠛⠛⠿⠿⣿⣿⣿⣿⣿⣿⣿⣦ \n");
+            printf("⢃⠚⢉⢼⠿⠟⢉⣿⣿⣟⣵⣾⣿⣿⡿⣋⣭⣙⠚⢒⡆⠄⢿⣿⣿⢻⣿⣿⡎⣾ \n");
+            printf("⠉⢀⠾⠋⠄⠄⣾⡿⠋⣿⣿⣿⣿⢟⢸⡇⢶⡎⣷⣿⣿⠄⢸⣿⠃⠈⣿⠈⡻⡽ \n");
+            printf("⣀⡀⠄⣀⠄⣰⠟⠄⠄⣿⣿⣿⣷⣮⣥⣭⣭⣵⣿⣿⣿⠄⡼⠁⠄⠄⠃⣀⠍⠃ \n");
+            printf("⠿⠃⠄⣯⠛⠓⠄⠄⠄⠄⢀⡀⠄⠄⠄⠄⠄⠄⠄⠄⡀⠁⠄⠄⠄⣿⣠⡆⠄ \n");
+            printf("⠄⠄⠄⡏⠘⡯⢀⠄⣷⢄⣰⢬⢙⢹⣣⣿⣟⡛⢑⢋⣤⣀⣔⠄⠄⠄⡟⢸⢣⣀ \n");
+            printf("⣤⠄⠄⠘⣄⡃⢽⣿⣾⣯⣭⣿⣿⣿⣿⣿⣿⣾⣿⣽⣿⣶⣯⣶⣿⠁⣥⠃⠄⠉ \n");
+            printf("⣿⡃⠄⠄⣼⢦⢚⣫⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣭⣭⣛⡛⢠⠁⠄⠄⠄ \n");
+            printf("⠉⠁⠄⠄⣾⣿⢇⠟⣩⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣯⣙⡻⢠⣾⠄⠄⠄⠄ \n");
+            printf("⠄⠄⠄⠄⠈⣾⡿⡯⠹⣩⣷⣿⣿⣿⣶⣿⣵⣿⣿⣿⣷⣝⠻⠡⣿⠹⠄⠰⣦⣀ \n");
+            printf("⠄⠄⣶⣤⣀⠿⠓⠄⠈⠹⢿⣿⣿⣟⣛⣛⣛⣻⣿⣿⡿⠇⠁⠄⠻⠄⠄⠄⠄⠉ \n");
+            printf("⠄⠄⠘⠟⠋⠄⠄⠄⠄⠄⠄⠙⢿⣿⣿⣿⣿⣿⡿⠋⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ \n");
+            printf("⠓⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⠉⠉⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ \n");
+        }
+
+
+
+        
         bufferCleaner();
     }while(opt == 'y' || opt == 'Y');
 }
@@ -190,10 +288,10 @@ int main(){
     }
 
     void setPosition(int x, int y){
-        //WaitForSingleObject(consoleMutex, INFINITE); // Bloqueia o Mutex
+        WaitForSingleObject(consoleMutex, INFINITE); // Bloqueia o Mutex
         COORD pos = {x, y};
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-        //ReleaseMutex(consoleMutex); // Libera o Mutex
+        ReleaseMutex(consoleMutex); // Libera o Mutex
     }
 
     void setChar(int x, int y, char c){
@@ -218,13 +316,13 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
     BCOORD coorde = *(BCOORD*)lpParam;
     
     while(repeats){
-        int min = coorde.y, max = coorde.x;
+        int min = 1, max = coorde.x;
         int random[numB];
 		int i, j;
-        if(scorePoints%20 == 0 && numB < MAX_BOMB) numB++;
+        if(scorePoints%40 == 0 && numB < MAX_BOMB) numB++;
         
         for(i = 0; i < numB; i++){
-            random[i] = min + rand() % ((max-2) - min + 1);
+            random[i] = min + rand() % ((max-5) - min + 1);
         }
 
         for(i = 0; i < LIN - 2; i++){ 
@@ -238,7 +336,7 @@ DWORD WINAPI rPosit(LPVOID lpParam) {
                 verif[j].y = coorde.y + i;
             }
 
-            Sleep(40);
+            Sleep(20);
 
             if(i == LIN - 3){
                 for (j = 0; j < numB; j++){
