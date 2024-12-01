@@ -6,3 +6,6 @@ This code is a console-based game where the player moves a character horizontall
 The code also features dynamic score tracking, ASCII art displays, and a restart option. It uses a mutex to safely handle shared resources between threads.
 
 Antivirus alerts may occur due to the use of low-level system calls (windows.h), dynamic threading and console manipulation, which are sometimes flagged as suspicious activities. External commands (like curl) and randomness in the output can also raise security concerns.
+
+Compiler: gcc (MinGW.org GCC-6.3.0-1) 6.3.0
+SO: Windows 11
